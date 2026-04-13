@@ -81,6 +81,7 @@ SRC=\
    kenwood.pas\
    icom.pas\
    rigctld.pas\
+   tci.pas\
    datetimec.pas
 
 trlog: $(SRC) hidapi.h hid.o dupe.o dt.o findports.o scoreposter.o

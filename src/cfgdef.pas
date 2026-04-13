@@ -349,6 +349,8 @@ PROCEDURE SetConfigurationDefaultValues;
     Radio2Type := NoInterfacedRadio;
     Radio1ControlPort := nil;
     Radio2ControlPort := nil;
+    Radio1TCIString := '';
+    Radio2TCIString := '';
     Radio1CwReverse := False;
     Radio2CwReverse := False;
     Radio1ReceiverAddress := 4;

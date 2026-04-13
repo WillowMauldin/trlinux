@@ -132,7 +132,8 @@ TYPE
                                               IC765,
                                               IC775,
                                               IC781,
-                                              RIGCTL
+                                              RIGCTL,
+                                              TCI
                                               );
 
 
@@ -238,6 +239,7 @@ VAR ActiveDVKPort:     parallelportx;
     Radio1CommandDelay:       INTEGER;
     Radio1ControlDelay:       INTEGER;
     Radio1ControlPort:        serialportx;
+    Radio1TCIString:          STRING;
     Radio1FrequencyAdder:     LONGINT;
     Radio1IcomFilterByte:     BYTE;
     Radio1Type:               InterfacedRadioType;
@@ -246,6 +248,7 @@ VAR ActiveDVKPort:     parallelportx;
     Radio2CommandDelay:       INTEGER;
     Radio2ControlDelay:       INTEGER;
     Radio2ControlPort:        serialportx;
+    Radio2TCIString:          STRING;
     Radio2FrequencyAdder:     LONGINT;
     Radio2IcomFilterByte:     BYTE;
     Radio2Type:               InterfacedRadioType;

@@ -4071,6 +4071,11 @@ VAR xResult,tempint: INTEGER;
         begin
             Radio1Type := RIGCTL;
             radio1controlport := serialportx.create(cmd);
+        end
+        else if upcase(copy(cmd,1,3)) = 'TCI' then
+        begin
+            Radio1Type := TCI;
+            Radio1TCIString := cmd;
         end;
 
         Cmd := UpperCase (Cmd);
@@ -4251,6 +4256,11 @@ VAR xResult,tempint: INTEGER;
         begin
             Radio2Type := RIGCTL;
             radio2controlport := serialportx.create(cmd);
+        end
+        else if upcase(copy(cmd,1,3)) = 'TCI' then
+        begin
+            Radio2Type := TCI;
+            Radio2TCIString := cmd;
         end;
 
         CMD := UpperCase (CMD);
