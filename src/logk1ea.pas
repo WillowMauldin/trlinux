@@ -103,7 +103,7 @@ TYPE
     end;
 
     SendStatusType = (NothingBeingSent, DitBeingSent, DahBeingSent);
-    RotatorType = (NoRotator, DCU1Rotator, OrionRotator, YaesuRotator); {KK1L: 6.71 Added YaesuRotator}
+    RotatorType = (NoRotator, DCU1Rotator, OrionRotator, RT21Rotator, YaesuRotator); {KK1L: 6.71 Added YaesuRotator}
 
     ShiftKeyType = (Shift, AltShift, None);
 
@@ -255,6 +255,7 @@ VAR ActiveDVKPort:     parallelportx;
 
     RelayControlPort:         keyerportx;
     RotatorSendCharBuffer:    CharacterBuffer;
+    RotatorReceiveCharBuffer: CharacterBuffer;
 
     RTTYReceiveCharBuffer: CharacterBuffer;
     RTTYSendCharBuffer:    CharacterBuffer;
@@ -1316,8 +1317,16 @@ VAR TempChar:   CHAR;
 
     IF caughtup THEN
         IF DoingRotator THEN
+            BEGIN
             IF RotatorSendCharBuffer.GetNextByte (TempByte) THEN
                 SendChar (ActiveRotatorPort, Chr (TempByte));
+
+            WHILE ActiveRotatorPort.CharReady DO
+                BEGIN
+                TempChar := ActiveRotatorPort.ReadChar;
+                RotatorReceiveCharBuffer.AddEntry (Ord (TempChar));
+                END;
+            END;
 
     { Now we check the RTTY port }
 
@@ -1522,6 +1531,7 @@ PROCEDURE TimerInit;
     IF ActiveRotatorPort <> nil THEN
         BEGIN
         DoingRotator := True;
+        RotatorReceiveCharBuffer.InitializeBuffer;
         RotatorSendCharBuffer.InitializeBuffer;
         END;
 

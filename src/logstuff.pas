@@ -403,6 +403,9 @@ VAR
     RemoteTerminalBand:  BandType;
     RemoteTerminalMode:  ModeType;
 
+    RotatorPositionRequestSent: BOOLEAN;
+    RotatorPositionResponse: STRING;
+
     SayHiRateCutoff:            INTEGER;
     SendCompleteFourLetterCall: BOOLEAN;
     SendQSOImmediately:         BOOLEAN;
@@ -452,6 +455,7 @@ VAR
 
     PROCEDURE DisplayGridSquareStatus (Call: CallString);
     PROCEDURE DisplayMultiMessageBuffer;
+    PROCEDURE DisplayRotatorPosition;
 
     FUNCTION  DVKRecentlyStarted (MaxElaspedSec100: LONGINT): BOOLEAN;
     PROCEDURE DVKStamp;
@@ -4991,6 +4995,8 @@ PROCEDURE StuffInit;
     ReadInLogFileOpen          := False;
     ReceivedData.LeftOverQTH   := '';
 
+    RotatorPositionRequestSent := False;
+
     SendExchangeKeyWhenCWHasStopped := NullKey;
 
     SeventyThreeMessageSent    := False;
@@ -6336,6 +6342,50 @@ VAR Sum: BYTE;
 
 
 
+PROCEDURE DisplayRotatorPosition;
+
+VAR TempByte: BYTE;
+
+    BEGIN
+    IF ActiveRotatorPort <> nil THEN
+        BEGIN
+        CASE ActiveRotatorType OF
+            OrionRotator:
+                BEGIN
+                END;
+
+            DCU1Rotator, RT21Rotator: { Green Heron uses DCU1 commands }
+                BEGIN
+                IF NOT RotatorPositionRequestSent THEN
+                    BEGIN
+                    RotatorPositionRequestSent := True;
+                    RotatorPositionResponse := '';
+                    SendRotatorMessage ('AI1;');
+                    END;
+
+                WHILE RotatorReceiveCharBuffer.GetNextByte (TempByte) DO
+                    RotatorPositionResponse := RotatorPositionResponse + Chr (TempByte);
+
+                IF RotatorPositionResponse [Length (RotatorPositionResponse)] = ';' THEN
+                    BEGIN
+                    { Response is xxx; }
+                    Delete (RotatorPositionResponse, Length (RotatorPositionResponse), 1);
+                    QuickDisplay ('Rotator position is ' + RotatorPositionResponse);
+
+                    RotatorPositionRequestSent := False;
+                    END;
+                END;
+
+            YaesuRotator:
+                BEGIN
+                END;
+
+            END; { of case }
+        END;
+    END;
+
+
+
 PROCEDURE RotorControl (Heading: INTEGER);
 
 VAR TempString: Str20;
@@ -6346,28 +6396,30 @@ VAR TempString: Str20;
         Str (Heading, TempString);
         WHILE Length (TempString) < 3 DO TempString := '0' + TempString;
 
-        IF ActiveRotatorType = OrionRotator THEN
-            BEGIN
-            TempString := '#' + TempString + CarriageReturn;
-            SendRotatorMessage (TempString);
-            Exit;
-            END;
+        CASE ActiveRotatorType OF
+            OrionRotator:
+                BEGIN
+                TempString := '#' + TempString + CarriageReturn;
+                SendRotatorMessage (TempString);
+                END;
 
-        IF ActiveRotatorType = DCU1Rotator THEN
-            BEGIN
-            SendRotatorMessage ('AP1' + TempString + ';');
-            SendRotatorMessage ('AM1' + ';');
-            END;
+            DCU1Rotator, RT21Rotator: { Green Heron uses DCU1 commands }
+                BEGIN
+                SendRotatorMessage ('AP1' + TempString + ';');
+                SendRotatorMessage ('AM1' + ';');
+                END;
 
-        {KK1L: 6.71}
-        IF ActiveRotatorType = YaesuRotator THEN
-            BEGIN
-            TempString := 'M' + TempString + CarriageReturn;
-            SendRotatorMessage (TempString);
-            END;
+            YaesuRotator:
+                BEGIN
+                TempString := 'M' + TempString + CarriageReturn;
+                SendRotatorMessage (TempString);
+                END;
+
+            END; { of case }
+
+        QuickDisplay2 ('Attempted to move rotator to ' + TempString);
         END;
     END;
-
 
 
 

@@ -4658,7 +4658,8 @@ VAR xResult,tempint: INTEGER;
 
         IF StringHas (CMD, 'DCU') THEN ActiveRotatorType := DCU1Rotator;
         IF StringHas (CMD, 'ORI') THEN ActiveRotatorType := OrionRotator;
-        IF StringHas (CMD, 'YAE') THEN ActiveRotatorType := YaesuRotator; {KK1L: 6.71}
+        IF StringHas (CMD, 'RT2') THEN ActiveRotatorType := RT21Rotator;
+        IF StringHas (CMD, 'YAE') THEN ActiveRotatorType := YaesuRotator;
 
         ProcessConfigInstructions2 := (ActiveRotatorType <> NoRotator) AND (CMD <> 'NONE');
         Exit;

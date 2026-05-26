@@ -1736,6 +1736,8 @@ VAR Result: INTEGER;
     N4OGW_Command: STRING;
 
     BEGIN
+    DisplayRotatorPosition;  { This might need a new home or slowed down }
+
     { Here is where we take care of some N4OGW bandmap stuff. }
 
     IF (N4OGW_RadioOne_BandMap_IP <> '') THEN

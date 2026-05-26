@@ -287,8 +287,8 @@ VAR FileWrite: TEXT;
         CASE ActiveRotatorType OF
             DCU1Rotator:  ActiveRotatorPort.setparams(4800,8,NoParity,1);
             OrionRotator: ActiveRotatorPort.setparams(9600,8,NoParity,1);
+            RT21Rotator:  ACtiveRotatorPort.setparams(4800,8,NoParity,1);
             YaesuRotator: ActiveRotatorPort.setparams(9600,8,NoParity,1);
- {KK1L: 6.71}
             END;
 
     IF ActiveModemPort <> nil THEN
