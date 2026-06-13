@@ -5166,9 +5166,14 @@ FUNCTION OpenUDPPortForOutput (IPAddress: STRING; PortNumber: LONGINT; VAR Socke
 
 VAR SocketAddr: TINetSockAddr;
     ConnectResult: INTEGER;
+    BroadcastEnable: LongInt;
 
     BEGIN
     Socket := fpSocket (AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+
+    BroadcastEnable := 1;
+    fpsetsockopt (Socket, SOL_SOCKET, SO_BROADCAST, @BroadcastEnable, SizeOf(BroadcastEnable));
+
     SocketAddr.sin_family := AF_INET;
     SocketAddr.sin_port := htons (PortNumber);
     SocketAddr.sin_addr := StrToNetAddr (IPAddress);
