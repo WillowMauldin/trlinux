@@ -167,7 +167,7 @@ Contact Delete
 INTERFACE
 
 USES Dos, Tree, ZoneCont, Country9, datetimec, KeyCode, Sockets,
-     Radio, LogWind, LogDupe, UnixType, BaseUnix, portname;
+     Radio, LogWind, LogDupe, UnixType, BaseUnix, portname, SysUtils;
 
 CONST BufferSize = 4096;
 
@@ -300,6 +300,8 @@ PROCEDURE MergeRXExchangeToUDPRecord (RXData: ContestExchange);
 { Takes the data found in the RXData record and puts it into the UDPRecord }
 
 VAR DayString, MonthString, YearString, TimeString, SecondsString, TempString: Str20;
+    NewGUID: TGUID;
+    GUIDString: STRING;
 
     BEGIN
     WITH RXData DO
@@ -437,6 +439,15 @@ VAR DayString, MonthString, YearString, TimeString, SecondsString, TempString: S
             END;
 
         IF Zone <> '' THEN UDP_Record.zone := Zone;
+
+        { Generate a unique GUID for this QSO }
+
+        CreateGUID (NewGUID);
+        GUIDString := LowerCase (GUIDToString (NewGUID));
+        GUIDString := StringReplace (GUIDString, '{', '', [rfReplaceAll]);
+        GUIDString := StringReplace (GUIDString, '}', '', [rfReplaceAll]);
+        GUIDString := StringReplace (GUIDString, '-', '', [rfReplaceAll]);
+        UDP_Record.ID := GUIDString;
 
 {       RXData Fields that are ignored
 
